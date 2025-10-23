@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>الملعب اللفظي VNeST — ابدأ</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='playground.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>أدخل الفعل</h1>
+    <p>اكتب الفعل الأساسي الذي تريد استخدامه في التمرين (مثال: أكل).</p>
+
+    <form action="{{ url_for('start') }}" method="post" class="stack">
+      <input type="text" name="verbInput" placeholder="أدخل الفعل هنا" required>
+      <button type="submit">ابدأ المعاينة</button>
+    </form>
+
+    <p class="note">هذه الصفحة مخصصة للأخصائي/ـة لمعاينة تجربة المستخدم قبل مشاركتها مع المراجع.</p>
+  </div>
+</body>
+</html>
