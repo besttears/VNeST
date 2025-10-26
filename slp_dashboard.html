@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}لوحة الأخصائي{% endblock %}
+{% block content %}
+<h1>لوحة الأخصائي اللغوي</h1>
+
+<div class="flex-between mt-2">
+  <h2>الملعبات السابقة</h2>
+  <a class="btn" href="{{ url_for('slp_new_playground') }}">إنشاء ملعب لفظي جديد</a>
+</div>
+
+<div class="card">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>تاريخ الإنشاء</th>
+        <th>اسم الملعب</th>
+        <th>آخر النتائج</th>
+        <th>عرض</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+      <tr>
+        <td>{{ r.created_at.strftime("%d/%m/%Y") }}</td>
+        <td>{{ r.title }}</td>
+        <td>
+          {% if r.client_runs %}
+            <ul class="compact">
+              {% for cr in r.client_runs %}
+                <li>{{ cr.client_name }} — {{ cr.date[:10] }}</li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            لا توجد محاولات بعد
+          {% endif %}
+        </td>
+        <td><a class="btn small" href="{{ url_for('slp_playground_results', playground_id=r.id) }}">اضغط هنا لرؤية النتائج</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

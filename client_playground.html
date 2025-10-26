@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}واجهة العميل{% endblock %}
+{% block content %}
+
+<h1>تمرين لفظي (VNeST)</h1>
+
+<!-- Preview badge if ?preview=1 -->
+<div class="card" id="preview-banner" style="display:none">
+  <strong>وضع التجربة:</strong> هذه التجربة لن تُحفظ في النتائج.
+</div>
+
+<!-- Step 0: Start -->
+<div class="card" id="client-start">
+  <label>اكتب اسمك (اختياري)
+    <input type="text" id="client-name" placeholder="اسم العميل">
+  </label>
+  <div class="flex-gap">
+    <button class="btn" id="btn-start" data-token="{{ token or '' }}">ابدأ</button>
+    <button class="btn outline" id="btn-tts-toggle" type="button">🔊 تشغيل القراءة الآلية</button>
+  </div>
+</div>
+
+<!-- Step 1: Verb -->
+<div class="card step hidden" id="step-verb" placeholder="من يمكن ان يفعل"></div> <span>{{ verb }}</span>
+  <label>الإجابة:
+    <div class="flex-gap">
+      <input type="text" id="answer-subject" placeholder=" ">
+      <button class="btn small outline mic" data-target="#answer-subject" type="button">🎤 إملاء</button>
+    </div>
+  </label>
+  <button class="btn" data-next="#step-object">التالي</button>
+</div>
+
+<!-- Step 2: Object -->
+<div class="card step hidden" id="step-object">
+  <div name="Verb_Prompt"> </div> <!-- Verb injection from flask-->
+  <div class="bubbles">
+    <span class="bubble verb">{{ verb }}</span>
+    <span class="bubble subject" id="bubble-subject">—</span>
+  </div>
+  <label>الإجابة:
+    <div class="flex-gap">
+      <input type="text" id="answer-object" placeholder="مثال: السندويتش">
+      <button class="btn small outline mic" data-target="#answer-object" type="button">🎤</button>
+    </div>
+  </label>
+  <button class="btn" data-next="#step-place">التالي</button>
+</div>
+
+<!-- Step 3: Place -->
+<div class="card step hidden" id="step-place">
+  <h3>أين <span id="subj2">—</span> <span class="verb">{{ verb or "أكل" }}</span> <span id="obj2">—</span>؟</h3>
+  <div class="bubbles">
+    <span class="bubble verb">{{ verb or "أكل" }}</span>
+    <span class="bubble subject" id="bubble-subject2">—</span>
+    <span class="bubble object" id="bubble-object2">—</span>
+  </div>
+  <label>الإجابة:
+    <div class="flex-gap">
+      <input type="text" id="answer-place" placeholder="مثال: المطعم">
+      <button class="btn small outline mic" data-target="#answer-place" type="button">🎤 إملاء</button>
+    </div>
+  </label>
+  <button class="btn" data-next="#step-dnd">التالي</button>
+</div>
+
+<!-- Step 4: Drag & drop (two sentences) -->
+<div class="card step hidden" id="step-dnd">
+  <h3>رتّب الكلمات الآتية إلى جملتين</h3>
+  <p class="muted">التسلسل المقبول: فاعل → فعل → مفعول → مكان أو فعل → فاعل → مفعول → مكان.</p>
+  <div class="dnd-bank" id="bank"></div>
+  <div class="dnd-targets">
+    <div>
+      <h4>الجملة 1</h4>
+      <div class="dropzone" id="sent1"></div>
+    </div>
+    <div>
+      <h4>الجملة 2</h4>
+      <div class="dropzone" id="sent2"></div>
+    </div>
+  </div>
+  <button class="btn" id="btn-check-order">تحقق</button>
+  <div class="popup hidden" id="order-feedback"></div>
+  <button class="btn hidden" id="to-typing" data-next="#step-typing">التالي</button>
+</div>
+
+<!-- Step 5: Type sentences + feedback -->
+<div class="card step hidden" id="step-typing">
+  <h3>اكتب الجمل:</h3>
+  <label>1
+    <div class="flex-gap">
+      <input type="text" id="sent1-text" placeholder="اكتب الجملة الأولى">
+      <button class="btn small outline mic" data-target="#sent1-text" type="button">🎤 إملاء</button>
+    </div>
+  </label>
+  <label>2
+    <div class="flex-gap">
+      <input type="text" id="sent2-text" placeholder="اكتب الجملة الثانية">
+      <button class="btn small outline mic" data-target="#sent2-text" type="button">🎤 إملاء</button>
+    </div>
+  </label>
+  <div class="flex-gap">
+    <button class="btn" id="btn-check-grammar">تحقق نحويًا</button>
+    <button class="btn outline" id="btn-tts-read" type="button">🔊 اقرأ الجمل</button>
+  </div>
+  <div class="popup hidden" id="grammar-feedback"></div>
+  <button class="btn hidden" id="to-yn" data-next="#step-yn">التالي</button>
+</div>
+
+<!-- Step 6: Y/N grammar -->
+<div class="card step hidden" id="step-yn">
+  <h3>هل الجمل الآتية صحيحة لغويًا؟</h3>
+  <p id="yn-stimulus">القطة تأكل التونة خارج بيتي</p>
+  <div class="yn-buttons">
+    <button class="btn outline" data-answer="yes">نعم</button>
+    <button class="btn" data-answer="no">لا</button>
+  </div>
+  <div class="popup hidden" id="yn-feedback"></div>
+  <button class="btn hidden" id="to-sem" data-next="#step-sem">التالي</button>
+</div>
+
+<!-- Step 7: Y/N semantics -->
+<div class="card step hidden" id="step-sem">
+  <h3>هل الجمل الآتية صحيحة معنويًا؟</h3>
+  <p id="sem-stimulus">سيأكل الرجل الرز في بيته أمس</p>
+  <div class="yn-buttons">
+    <button class="btn outline" data-answer="yes">نعم</button>
+    <button class="btn" data-answer="no">لا</button>
+  </div>
+  <div class="popup hidden" id="sem-feedback"></div>
+  <button class="btn hidden" id="finish">إنهاء</button>
+</div>
+
+<!-- Step 8: Finish -->
+<div class="card step hidden" id="step-finish">
+  <h3>شكرًا! تم إنهاء التمرين.</h3>
+  <div class="flex-gap">
+    <a class="btn" href="{{ url_for('slp_dashboard') }}">رجوع</a>
+    <button class="btn outline" id="finish-ok">إرسال</button>
+  </div>
+</div>
+
+<!-- Azure Speech SDK (browser) -->
+<script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script>
+<script>
+  window.SPEECH_REGION = "{{ speech_region or '' }}";
+  window.SPEECH_VOICE  = "{{ speech_voice or 'ar-SA-HamedNeural' }}";
+  window.SPEECH_ENABLED = "{{ 'true' if speech_enabled else 'false' }}";
+</script>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% endblock %}

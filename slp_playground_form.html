@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}إنشاء ملعب لفظي{% endblock %}
+{% block content %}
+<h1>إنشاء ملعب لفظي (VNeST)</h1>
+
+<form method="post" class="card form">
+  <label>اسم الملعب
+    <input type="text" name="title" required>
+  </label>
+
+  <label>الفعل الرئيسي
+    <input type="text" name="verb" required>
+  </label>
+
+  <label>ملاحظات
+    <textarea name="notes" rows="3" placeholder="ما الذي تريد التركيز عليه؟"></textarea>
+  </label>
+
+  <fieldset>
+    <legend>اختر لهجة العميل (اختياري)</legend>
+    <label><input type="checkbox" name="dialects" value="اللهجة المصرية"> اللهجة المصرية</label>
+    <label><input type="checkbox" name="dialects" value="اللهجة السعودية"> اللهجة السعودية</label>
+    <label><input type="checkbox" name="dialects" value="اللهجة الشامية"> اللهجة الشامية</label>
+  </fieldset>
+
+  <button class="btn start-button" type="submit">إنشاء ومتابعة</button>
+  <a class="btn outline" href="{{ url_for('slp_dashboard') }}">إلغاء</a>
+</form>
+{% endblock %}

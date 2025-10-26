@@ -1,0 +1,70 @@
+/* Base layout */
+:root{
+  --bg:#F0F4F8;
+  --text:#333333;
+  --title:#2C3E50;
+  --primary:#4A90E2;
+  --primary-hover:#357ABD;
+  --divider:#E0E0E0;
+  --card:#FFFFFF;
+  --shadow:rgba(0,0,0,0.1);
+}
+
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Tahoma, Arial, sans-serif;}
+.container{max-width:980px;margin:0 auto;padding:16px;}
+.topbar{background:var(--card);box-shadow:0 2px 6px var(--shadow);}
+.flex-between{display:flex;align-items:center;justify-content:space-between;}
+.flex-gap{display:flex;gap:12px;align-items:center;}
+.mt-2{margin-top:16px;}
+
+.brand{font-weight:bold;color:var(--title);}
+.hello{margin-inline-end:10px;color:var(--title);}
+
+a{color:var(--primary);text-decoration:none}
+a:hover{color:var(--primary-hover)}
+
+.btn{display:inline-block;background:var(--primary);color:#fff;padding:10px 16px;border-radius:10px;border:none;cursor:pointer}
+.btn:hover{background:var(--primary-hover)}
+.btn.small{padding:6px 10px;font-size:14px;border-radius:8px}
+.btn.outline{background:#fff;color:var(--primary);border:1px solid var(--primary)}
+.btn.outline:hover{color:#fff;background:var(--primary)}
+
+.card{background:var(--card);padding:16px;border-radius:14px;box-shadow:0 6px 16px var(--shadow);margin:12px 0}
+.form label{display:block;margin:10px 0}
+input[type="text"],input[type="email"],input[type="password"],textarea{
+  width:100%;padding:10px;border:1px solid var(--divider);border-radius:8px;background:#fff
+}
+fieldset{border:1px solid var(--divider);border-radius:8px;padding:8px 12px;margin:10px 0}
+legend{padding:0 6px;color:var(--title)}
+
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{border-bottom:1px solid var(--divider);padding:10px;text-align:right}
+.table thead th{color:var(--title)}
+ul.compact{list-style:none;margin:0;padding:0}
+ul.compact li{padding:2px 0}
+
+.flash-wrap{margin:10px 0}
+.flash{padding:10px;border-radius:8px;margin:6px 0}
+.flash.success{background:#E8F5E9;color:#256029}
+.flash.error{background:#FDECEA;color:#611A15}
+.muted{color:#666}
+.mono{font-family:Consolas, monospace}
+.small{font-size:12px}
+
+/* Bubbles and dnd */
+.bubbles{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.bubble{background:#fff;border:1px solid var(--divider);padding:6px 10px;border-radius:999px;box-shadow:0 2px 6px var(--shadow)}
+.draggable{cursor:grab}
+.dnd-bank{display:flex;gap:8px;flex-wrap:wrap;min-height:52px;border:1px dashed var(--divider);padding:8px;border-radius:12px;background:#fafafa}
+.dnd-targets{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.dropzone{min-height:52px;border:2px dashed var(--primary);border-radius:12px;padding:8px;display:flex;gap:8px;flex-wrap:wrap;background:#fff}
+
+/* Popups */
+.popup{background:#fff;border-left:4px solid var(--primary);padding:10px;border-radius:8px;margin-top:10px}
+.hidden{display:none}
+
+/* Buttons alias from your older naming */
+.submit-button{background:var(--primary)}
+.submit-button:hover{background:var(--primary-hover)}
+.start-button{background:var(--primary)}
+.start-button:hover{background:var(--primary-hover)}

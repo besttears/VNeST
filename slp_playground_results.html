@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}نتائج الملعب{% endblock %}
+{% block content %}
+<h1>{{ pg.title }}</h1>
+
+<div class="card">
+  <p><strong>الفعل:</strong> {{ pg.verb }}</p>
+  <p><strong>ملاحظات:</strong> {{ pg.notes or "—" }}</p>
+  <p><strong>اللهجات:</strong> {{ ", ".join(pg.dialects) if pg.dialects else "—" }}</p>
+</div>
+
+<div class="card">
+  <h3>مشاركة / تجربة</h3>
+  <label>رابط العميل (أرسله للعميل):</label>
+  <input type="text" class="mono" style="width:100%" readonly value="{{ share_url }}">
+  <div class="flex-gap" style="margin-top:10px">
+    <a class="btn" href="{{ preview_url }}" target="_blank">جرّب كعميل</a>
+    <a class="btn outline" href="{{ share_url }}" target="_blank">فتح رابط العميل</a>
+  </div>
+  <p class="muted">وضع التجربة لا يحفظ النتائج.</p>
+</div>
+
+<div class="card">
+  <h3>نتائج العميل</h3>
+  {% if pg.client_runs %}
+    <table class="table">
+      <thead><tr><th>التاريخ</th><th>اسم العميل</th><th>ملخص</th></tr></thead>
+      <tbody>
+        {% for run in pg.client_runs|reverse %}
+        <tr>
+          <td>{{ run.date[:19].replace('T',' ') }}</td>
+          <td>{{ run.client_name }}</td>
+          <td><pre class="mono small">{{ run.answers|tojson(indent=2, ensure_ascii=False) }}</pre></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="muted">لا توجد محاولات بعد.</p>
+  {% endif %}
+</div>
+
+<p><a class="btn" href="{{ url_for('slp_dashboard') }}">رجوع إلى لوحة الأخصائي</a></p>
+{% endblock %}
