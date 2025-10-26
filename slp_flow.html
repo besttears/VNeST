@@ -1,398 +1,0 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8">
-  <title>معاينة VNeST — للـSLP</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='playground.css') }}">
-</head>
-<body>
-  <div class="container" role="main">
-    <h1>VNeST — معاينة الأخصائي/ـة</h1>
-    <p class="note" id="note">الفعل الحالي: <strong id="verb">{{ verb }}</strong>. تمرين واحد في كل شاشة. يمكنك تشغيل قراءة النص أو استخدام الإملاء الصوتي.</p>
-</div>
-    <!-- Progress -->
-    <div class="progress-wrap" aria-label="شريط التقدم">
-      <div class="progress-label">
-        <span id="progText">الخطوة 1 من 6</span>
-        <span id="progName">اختيار الفاعل</span>
-      </div>
-      <div class="progress" aria-hidden="true"><div id="progBar" class="progress-bar"></div></div>
-    </div>
-
-    <!-- A: SUBJECTS (asked twice) -->
-    <section id="view-A" class="view active" data-step-name="اختيار الفاعل" aria-live="polite">
-      <h2 id="aHeading">A </h2>
-      <p id="aPrompt">مين اللي يمكن يسوي هذاالفعل؟.({{ verb }})</p>
-
-      <div class="assist" aria-label="مساعدة الوصول">
-        <button class="icon small" id="aSpeak" aria-label="قراءة السؤال بصوت عالٍ"><span>🔊</span></button>
-        <button class="icon small mic" id="aMic" aria-label="التحدث للإجابة"><span>🎤</span></button>
-        <span class="hint" id="aHint">يمكنك الكتابة أو الضغط على “تحدث”.</span>
-      </div>
-
-      <input id="aInput" aria-labelledby="aHeading aPrompt" >
-      <div class="navbar">
-        <button id="aNext" aria-label="التالي إلى الخطوة التالية">التالي</button>
-      </div>
-      <!-- TODO(Azure): generate subject prompts -->
-    </section>
-
-    <!-- B: OBJECT for each subject -->
-    <section id="view-B" class="view" data-step-name="المفعول به" aria-live="polite">
-      <h2 id="bHeading">الخطوة B — اختيار المفعول به</h2>
-      <p id="bPrompt"></p>
-
-      <div class="assist">
-        <button class="icon small" id="bSpeak" aria-label="قراءة السؤال بصوت عالٍ">🔊 <span>استمع</span></button>
-        <button class="icon small mic" id="bMic" aria-label="التحدث للإجابة">🎤 <span>تحدث</span></button>
-        <span class="hint">يمكنك الكتابة أو الإملاء الصوتي.</span>
-      </div>
-
-      <input id="bInput" aria-labelledby="bHeading bPrompt" placeholder="اكتب إجابة أو استخدم (تحدث)">
-      <div class="navbar">
-        <button id="bNext">التالي</button>
-      </div>
-      <!-- TODO(Azure): score object answers -->
-    </section>
-
-    <!-- C: PLACE for each subject -->
-    <section id="view-C" class="view" data-step-name="مكان الحدث" aria-live="polite">
-      <h2 id="cHeading">الخطوة C — أين قد يحدث الفعل؟</h2>
-      <p id="cPrompt"></p>
-
-      <div class="assist">
-        <button class="icon small" id="cSpeak" aria-label="قراءة السؤال بصوت عالٍ">🔊 <span>استمع</span></button>
-        <button class="icon small mic" id="cMic" aria-label="التحدث للإجابة">🎤 <span>تحدث</span></button>
-        <span class="hint">اكتب أو تحدث للإجابة.</span>
-      </div>
-
-      <input id="cInput" aria-labelledby="cHeading cPrompt" placeholder="اكتب إجابة أو استخدم (تحدث)">
-      <div class="navbar">
-        <button id="cNext">التالي</button>
-      </div>
-      <!-- TODO(Azure): speech + score -->
-    </section>
-
-    <!-- D: CANVAS (drag and drop) -->
-    <section id="view-D" class="view" data-step-name="تركيب الجمل">
-      <h2>D — تركيب الجمل بالسحب والإفلات</h2>
-      <p class="note">اسحب الكلمات وضعها في الفراغ المناسب  </p><br></br><p( ----/ ---- / ------).></p>
-      <div class="canvas" id="canvas" aria-label="لوحة ترتيب الكلمات"></div>
-      <div class="stack" aria-label="نموذجا الجمل">
-        <div>جملة 1:
-          <span class="sentence-blank" id="s1-subj" aria-label="فاعل الجملة الأولى">فاعل</span>
-          <span class="sentence-blank" id="s1-verb" aria-label="فعل الجملة الأولى">{{ verb }}</span>
-          <span class="sentence-blank" id="s1-obj" aria-label="مفعول الجملة الأولى">مفعول</span>
-          <span class="sentence-blank" id="s1-place" aria-label="مكان الجملة الأولى">مكان</span>
-        </div>
-        <div>جملة 2:
-          <span class="sentence-blank" id="s2-subj" aria-label="فاعل الجملة الثانية">فاعل</span>
-          <span class="sentence-blank" id="s2-verb" aria-label="فعل الجملة الثانية">{{ verb }}</span>
-          <span class="sentence-blank" id="s2-obj" aria-label="مفعول الجملة الثانية">مفعول</span>
-          <span class="sentence-blank" id="s2-place" aria-label="مكان الجملة الثانية">مكان</span>
-        </div>
-      </div>
-      <div class="navbar">
-        <button id="dNext">التالي</button>
-      </div>
-      <!-- TODO(Azure): classify correctness -->
-    </section>
-
-    <!-- E: GRAMMAR -->
-    <section id="view-E" class="view" data-step-name="فحص نحوي" aria-live="polite">
-      <h2 id="eHeading">الخطوة E — فحص نحوي (٣ جمل)</h2>
-      <p id="eSentence" aria-live="assertive"></p>
-
-      <div class="assist">
-        <button class="icon small" id="eSpeak" aria-label="قراءة الجملة بصوت عالٍ">🔊 <span>استمع</span></button>
-        <button class="icon small mic" id="eMicYes" aria-label="قل نعم">🎤 <span>قل: نعم</span></button>
-        <button class="icon small mic" id="eMicNo" aria-label="قل لا">🎤 <span>قل: لا</span></button>
-        <span class="hint">يمكنك الضغط على نعم/لا أو قولها صوتياً.</span>
-      </div>
-
-      <div class="row">
-        <button id="eYes">نعم</button>
-        <button id="eNo" class="secondary">لا</button>
-      </div>
-
-      <div id="eCorrectionBlock" class="stack" style="display:none">
-        <label for="eCorrection" class="note">اقترح التصحيح:</label>
-        <div class="assist">
-          <button class="icon small mic" id="eMicFix" aria-label="تحدث لاقتراح التصحيح">🎤 <span>تحدث</span></button>
-        </div>
-        <input id="eCorrection" placeholder="اكتب أو استخدم الإملاء الصوتي">
-        <button id="eConfirm">تأكيد</button>
-      </div>
-    </section>
-
-    <!-- F: SEMANTICS -->
-    <section id="view-F" class="view" data-step-name="فحص دلالي" aria-live="polite">
-      <h2 id="fHeading">الخطوة F — فحص دلالي</h2>
-      <p id="fPrompt"></p>
-
-      <div class="assist">
-        <button class="icon small" id="fSpeak" aria-label="قراءة العنصر بصوت عالٍ">🔊 <span>استمع</span></button>
-        <button class="icon small mic" id="fMic" aria-label="تحدث للإجابة">🎤 <span>تحدث</span></button>
-        <span class="hint">اكتب نعم/لا وسببك، أو صَحّح العبارة.</span>
-      </div>
-
-      <input id="fInput" aria-labelledby="fHeading fPrompt" placeholder="أدخل جوابك (نص أو صوت)">
-      <div class="navbar">
-        <button id="fNext">التالي</button>
-      </div>
-    </section>
-
-    <!-- SHARE -->
-    <section id="view-Share" class="view" data-step-name="مشاركة الملعب">
-      <h2>انتهت المعاينة</h2>
-      <p>انسخ رابط الملعب وانشره للمراجع.</p>
-      <button id="shareBtn">شارك الملعب</button>
-      <div id="shareResult" class="stack" style="display:none"></div>
-    </section>
-  </div>
-
-<script>
-  /* ------------------ Accessibility helpers: TTS & ASR ------------------ */
-  // Text-to-Speech (Arabic preferred)
-  function speak(text){
-    try{
-      if (!('speechSynthesis' in window)) return alert('المتصفح لا يدعم قراءة النص.');
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      const pickVoice = () => {
-        const voices = speechSynthesis.getVoices();
-        const ar = voices.find(v => /ar|Arabic/i.test(v.lang||v.name));
-        if (ar) u.voice = ar; else if (voices[0]) u.voice = voices[0];
-        speechSynthesis.speak(u);
-      };
-      if (speechSynthesis.getVoices().length) pickVoice();
-      else speechSynthesis.onvoiceschanged = pickVoice;
-    }catch(e){}
-  }
-
-  // Automatic Speech Recognition (Web Speech API)
-  function makeRecognizer(onResult){
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) return null;
-    const r = new SR();
-    r.lang = 'ar-SA';
-    r.interimResults = false;
-    r.maxAlternatives = 1;
-    r.onresult = (e)=> {
-      const txt = e.results[0][0].transcript || '';
-      onResult(txt);
-    };
-    r.onerror = ()=>{};
-    return r;
-  }
-
-  // Progress
-  const TOTAL_STEPS = 6;
-  const progBar  = document.getElementById('progBar');
-  const progText = document.getElementById('progText');
-  const progName = document.getElementById('progName');
-  function showView(id, stepNum){
-    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-    const el = document.getElementById(id);
-    if (el){ el.classList.add('active'); window.scrollTo({top:0, behavior:'instant'}); }
-    if (stepNum){ setProgress(stepNum, el?.dataset.stepName || ''); }
-  }
-  function setProgress(n, label){
-    const pct = Math.max(0, Math.min(100, (n / TOTAL_STEPS) * 100));
-    progBar.style.width = pct + '%';
-    progText.textContent = `الخطوة ${n} من ${TOTAL_STEPS}`;
-    progName.textContent = label || '';
-  }
-  setProgress(1, document.getElementById('view-A').dataset.stepName);
-
-  // Data
-  const verb = document.getElementById('verb').textContent;
-  const subjects = [];
-  const objects = [];
-  const places  = [];
-
-  /* ------------------ STEP A ------------------ */
-  let aCount = 0;
-  const aInput  = document.getElementById('aInput');
-  const aPrompt = document.getElementById('aPrompt');
-  document.getElementById('aSpeak').onclick = ()=> speak(aPrompt.textContent);
-  const aRec = makeRecognizer(txt => { aInput.value = txt; });
-  document.getElementById('aMic').onclick = ()=> aRec ? aRec.start() : alert('المتصفح لا يدعم الإملاء الصوتي.');
-  document.getElementById('aNext').onclick = ()=>{
-    const val = aInput.value.trim();
-    if (val) subjects.push(val);
-    aInput.value='';
-    aCount++;
-    if (aCount < 2){
-      aPrompt.textContent = `(${verb}) .....مين اللي يمكن يسوي هذا الفعل ة ${aCount+1})`;
-    } else {
-      prepareB();
-      showView('view-B', 2);
-    }
-  };
-
-  /* ------------------ STEP B ------------------ */
-  let bIndex = 0;
-  const bInput = document.getElementById('bInput');
-  const bPrompt = document.getElementById('bPrompt');
-  function updateBPrompt(){ const s = subjects[bIndex] || 'ـــ'; bPrompt.textContent = `إيش ${s} ${verb}؟`; }
-  function prepareB(){ bIndex=0; updateBPrompt(); }
-  document.getElementById('bSpeak').onclick = ()=> speak(bPrompt.textContent);
-  const bRec = makeRecognizer(txt => { bInput.value = txt; });
-  document.getElementById('bMic').onclick = ()=> bRec ? bRec.start() : alert('المتصفح لا يدعم الإملاء الصوتي.');
-  document.getElementById('bNext').onclick = ()=>{
-    const val = bInput.value.trim(); objects[bIndex] = val || '';
-    bInput.value=''; bIndex++;
-    if (bIndex < 2){ updateBPrompt(); }
-    else { prepareC(); showView('view-C', 3); }
-  };
-
-  /* ------------------ STEP C ------------------ */
-  let cIndex = 0;
-  const cInput = document.getElementById('cInput');
-  const cPrompt = document.getElementById('cPrompt');
-  function updateCPrompt(){ const s = subjects[cIndex] || 'ـــ'; cPrompt.textContent = `وين ${s} يمكن ${verb}؟`; }
-  function prepareC(){ cIndex=0; updateCPrompt(); }
-  document.getElementById('cSpeak').onclick = ()=> speak(cPrompt.textContent);
-  const cRec = makeRecognizer(txt => { cInput.value = txt; });
-  document.getElementById('cMic').onclick = ()=> cRec ? cRec.start() : alert('المتصفح لا يدعم الإملاء الصوتي.');
-  document.getElementById('cNext').onclick = ()=>{
-    const val = cInput.value.trim(); places[cIndex] = val || '';
-    cInput.value=''; cIndex++;
-    if (cIndex < 2){ updateCPrompt(); }
-    else { initCanvas(); showView('view-D', 4); }
-  };
-
-  /* ------------------ STEP D (Canvas) ------------------ */
-  function initCanvas(){
-    const canvas = document.getElementById('canvas');
-    canvas.innerHTML = '';
-    const words = [verb, ...subjects, ...objects, ...places].filter(Boolean);
-    words.forEach(w=>{
-      const el = document.createElement('div');
-      el.className='word'; el.textContent=w;
-      el.style.top = (10+Math.random()*260)+'px';
-      el.style.left = (10+Math.random()*620)+'px';
-      el.setAttribute('role','button'); el.setAttribute('tabindex','0');
-      el.setAttribute('aria-label', `كلمة: ${w}`);
-      canvas.appendChild(el);
-      makeDraggable(el);
-    });
-    ['s1-subj','s1-obj','s1-place','s2-subj','s2-obj','s2-place'].forEach(id=>{
-      const el = document.getElementById(id);
-      el.textContent = el.id.includes('subj') ? 'فاعل' : (el.id.includes('obj') ? 'مفعول' : 'مكان');
-      el.ondragover = e => e.preventDefault();
-    });
-  }
-  function makeDraggable(el){
-    el.draggable = true;
-    el.ondragstart = e => { e.dataTransfer.setData('text/plain', el.textContent); };
-    document.addEventListener('dragover', e => e.preventDefault());
-    document.addEventListener('drop', e => {
-      const target = e.target;
-      if (target.classList.contains('sentence-blank')){
-        e.preventDefault();
-        target.textContent = e.dataTransfer.getData('text/plain');
-      }
-    });
-  }
-  document.getElementById('dNext').onclick = ()=>{
-    startGrammar();
-    showView('view-E', 5);
-  };
-
-  /* ------------------ STEP E (Grammar) ------------------ */
-  const grammarItems = [
-    `${verb} الرجل القطة.`,
-    `القطة ${verb} الحليب.`,
-    `أنا ${verb} التفاحة في المطبخ.`
-  ];
-  const grammarAnswers = [];
-  let eIndex = 0;
-  const eSentence = document.getElementById('eSentence');
-  const eBlock = document.getElementById('eCorrectionBlock');
-  const eCorrection = document.getElementById('eCorrection');
-
-  function startGrammar(){
-    eIndex = 0; eBlock.style.display = 'none'; eCorrection.value='';
-    eSentence.textContent = grammarItems[eIndex];
-  }
-  document.getElementById('eSpeak').onclick = ()=> speak(eSentence.textContent);
-
-  document.getElementById('eYes').onclick = ()=> { grammarAnswers[eIndex] = {sentence: grammarItems[eIndex], answer:'yes'}; nextGrammar(); };
-  document.getElementById('eNo').onclick  = ()=> { grammarAnswers[eIndex] = {sentence: grammarItems[eIndex], answer:'no'}; eBlock.style.display='block'; };
-
-  const eYesRec = makeRecognizer(txt => { if (/^\s*نعم\s*$/i.test(txt)) document.getElementById('eYes').click(); });
-  const eNoRec  = makeRecognizer(txt => { if (/^\s*لا\s*$/i.test(txt))  document.getElementById('eNo').click();  });
-  document.getElementById('eMicYes').onclick = ()=> eYesRec ? eYesRec.start() : alert('لا يدعم المتصفح الإملاء الصوتي.');
-  document.getElementById('eMicNo').onclick  = ()=> eNoRec  ? eNoRec.start()  : alert('لا يدعم المتصفح الإملاء الصوتي.');
-
-  const eFixRec = makeRecognizer(txt => { eCorrection.value = txt; });
-  document.getElementById('eMicFix').onclick = ()=> eFixRec ? eFixRec.start() : alert('لا يدعم المتصفح الإملاء الصوتي.');
-  document.getElementById('eConfirm').onclick = ()=>{
-    grammarAnswers[eIndex].correction = eCorrection.value.trim();
-    eBlock.style.display='none'; eCorrection.value='';
-    nextGrammar();
-  };
-
-  function nextGrammar(){
-    eIndex++;
-    if (eIndex < 3){
-      eSentence.textContent = grammarItems[eIndex];
-    } else {
-      startSemantics();
-      showView('view-F', 6);
-    }
-  }
-
-  /* ------------------ STEP F (Semantics) ------------------ */
-  const semanticItems = [
-    `${verb} الشمس الطاولة`,
-    `${verb} الطفل الغداء`,
-    `${verb} السيارة القهوة`
-  ];
-  const semanticAnswers = [];
-  let fIndex = 0;
-  const fPrompt = document.getElementById('fPrompt');
-  const fInput  = document.getElementById('fInput');
-
-  function startSemantics(){
-    fIndex = 0; fInput.value='';
-    fPrompt.textContent = semanticItems[fIndex];
-  }
-  document.getElementById('fSpeak').onclick = ()=> speak(fPrompt.textContent);
-  const fRec = makeRecognizer(txt => { fInput.value = txt; });
-  document.getElementById('fMic').onclick = ()=> fRec ? fRec.start() : alert('لا يدعم المتصفح الإملاء الصوتي.');
-  document.getElementById('fNext').onclick = ()=>{
-    semanticAnswers.push({item: semanticItems[fIndex], response: fInput.value.trim()});
-    fInput.value='';
-    fIndex++;
-    if (fIndex < semanticItems.length){
-      fPrompt.textContent = semanticItems[fIndex];
-    } else {
-      showView('view-Share'); // progress remains 6/6
-    }
-  };
-
-  /* ------------------ SHARE ------------------ */
-  document.getElementById('shareBtn').onclick = async ()=>{
-    const payload = { verb, subjects, objects, places, grammar_questions: grammarAnswers, semantic_items: semanticAnswers };
-    const res = await fetch('{{ url_for("share") }}', {   <!-- FIXED HERE -->
-      method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    const div = document.getElementById('shareResult');
-    if (data.ok){
-      div.innerHTML = `
-        <p>تم إنشاء رابط المشاركة:</p>
-        <input value="${data.url}" id="shareLink" style="width:100%" aria-label="رابط المشاركة">
-        <button class="icon small" onclick="navigator.clipboard.writeText(document.getElementById('shareLink').value)">📋 نسخ الرابط</button>
-      `;
-      div.style.display = 'block';
-    } else {
-      div.textContent = 'تعذر إنشاء الرابط'; div.style.display = 'block';
-    }
-  };
-</script>
-</body>
-</html>
